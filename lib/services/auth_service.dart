@@ -7,7 +7,7 @@ class AuthService {
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/login'),
+        Uri.parse('$baseUrl/api/auth/login'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -27,11 +27,11 @@ class AuthService {
   }
 
   // Registro de usuario
-  Future<Map<String, dynamic>> registerUser(String name, String lastname,
-      String email, String password) async {
+  Future<Map<String, dynamic>> registerUser(
+      String name, String lastname, String email, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/register'),
+        Uri.parse('$baseUrl/api/auth/register'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',

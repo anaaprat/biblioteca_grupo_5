@@ -31,8 +31,9 @@ class _LoginScreenState extends State<LoginScreen> {
       isLoading = false;
     });
 
-    if (result.containsKey("role")) {
-      String role = result["role"] ?? "";
+    if (result.containsKey("token") && result.containsKey("role")) {
+      String token = result["token"];
+      String role = result["role"];
 
       ScaffoldMessenger.of(currentContext).showSnackBar(
         const SnackBar(
@@ -50,7 +51,9 @@ class _LoginScreenState extends State<LoginScreen> {
       } else if (role == "ADMIN") {
         Navigator.pushReplacement(
           currentContext,
-          MaterialPageRoute(builder: (context) => AdminScreen()),
+          MaterialPageRoute(
+            builder: (context) => AdminScreen(token: token),
+          ),
         );
       } else {
         ScaffoldMessenger.of(currentContext).showSnackBar(
