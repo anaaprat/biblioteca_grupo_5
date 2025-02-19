@@ -1,62 +1,44 @@
 plugins {
     id "com.android.application"
     id "kotlin-android"
-    id "org.jetbrains.kotlin.android" // Asegurar integración de Kotlin
-    id "dev.flutter.flutter-gradle-plugin" // Plugin de Flutter
+    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    id "dev.flutter.flutter-gradle-plugin"
 }
 
 android {
-    namespace = "com.example.eventify" // Identificador único del paquete
-    compileSdk = 34 // SDK más reciente
-
-    defaultConfig {
-        applicationId "com.example.eventify" // Identificador único del paquete
-        minSdkVersion 21 // Versión mínima compatible
-        targetSdkVersion 34 // Última versión compatible
-        versionCode 1
-        versionName "1.0"
-    }
+    namespace = "com.example.biblioteca_grupo_5"
+    compileSdk = flutter.compileSdkVersion
+    ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 
     kotlinOptions {
-        jvmTarget = "1.8" // Asegurar compatibilidad con Kotlin
+        jvmTarget = JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        applicationId = "com.example.biblioteca_grupo_5"
+        // You can update the following values to match your application needs.
+        // For more information, see: https://flutter.dev/to/review-gradle-config.
+        minSdk = flutter.minSdkVersion
+        targetSdk = flutter.targetSdkVersion
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName
     }
 
     buildTypes {
         release {
-            signingConfig signingConfigs.debug // Firma de debug para pruebas
-            minifyEnabled true // Reducir tamaño del código
-            shrinkResources true // Eliminar recursos no utilizados
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-        debug {
-            minifyEnabled false // No reducir tamaño del código en debug
-            shrinkResources false // No eliminar recursos en debug
-        }
-    }
-
-    lintOptions {
-        abortOnError false // Deshabilitar abortos por errores de lint
-    }
-
-    packagingOptions {
-        resources {
-            excludes += '/META-INF/{AL2.0,LGPL2.1}' // Excluir archivos conflictivos
+            // TODO: Add your own signing config for the release build.
+            // Signing with the debug keys for now, so `flutter run --release` works.
+            signingConfig = signingConfigs.debug
         }
     }
 }
 
 flutter {
-    source = "../.." // Ruta al código fuente de Flutter
-}
-
-// Asegurar uso de versión de Gradle Wrapper compatible
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
+    source = "../.."
 }
