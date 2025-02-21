@@ -1,16 +1,17 @@
 # biblioteca_grupo_5
 
-A new Flutter project.
-
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+Usuarios:
+usuario1: admin@admin.com
+contraseña: 123123123
+------------------
+usuario2: marcitabuxtelo@gmail.com
+contraseña: 123123123
+------------------
 
-A few resources to get you started if this is your first Flutter project:
+Pantalla de Administración:
+Para gestionar la activación o desactivación, desliza hacia la izquierda. Al hacerlo, aparecerá una confirmación para elegir la acción deseada.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Pantalla de Usuario:
+Esta pantalla cuenta con dos pestañas: una para visualizar todos los libros disponibles para préstamo y otra para gestionar la devolución de los libros que tienes en tu poder.
