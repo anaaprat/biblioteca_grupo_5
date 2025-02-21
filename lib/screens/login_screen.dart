@@ -42,11 +42,10 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       );
 
-      // Redirigir según el rol
       if (role == "USER") {
         Navigator.pushReplacement(
           currentContext,
-          MaterialPageRoute(builder: (context) => UserScreen()),
+          MaterialPageRoute(builder: (context) => UserScreen(token: token)),
         );
       } else if (role == "ADMIN") {
         Navigator.pushReplacement(
@@ -76,81 +75,99 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF6D4C41), // Dark brown background
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                "Sign In",
-                style: GoogleFonts.poppins(
-                  textStyle: TextStyle(
-                    color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
-              TextField(
-                controller: emailController,
-                style: TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  labelText: "Email",
-                  labelStyle: TextStyle(color: Colors.white),
-                  filled: true,
-                  fillColor: Colors.brown[700],
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                ),
-              ),
-              SizedBox(height: 15),
-              TextField(
-                controller: passwordController,
-                obscureText: true,
-                style: TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  labelText: "Password",
-                  labelStyle: TextStyle(color: Colors.white),
-                  filled: true,
-                  fillColor: Colors.brown[700],
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                ),
-              ),
-              SizedBox(height: 20),
-              isLoading
-                  ? CircularProgressIndicator()
-                  : ElevatedButton(
-                      onPressed: _login,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Color(0xFF8D6E63), // Light brown button
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      child: Text("Login",
-                          style: TextStyle(color: Colors.white, fontSize: 16)),
-                    ),
-              SizedBox(height: 10),
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => RegisterScreen()),
-                  );
-                },
-                child: Text("Don't have an account? Sign up",
-                    style: TextStyle(color: Colors.white70)),
-              ),
-            ],
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.brown.shade300, Colors.brown.shade100],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
         ),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 25),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "Marana's library <3",
+                  style: GoogleFonts.poppins(
+                    textStyle: TextStyle(
+                      color: Colors.brown.shade900,
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 30),
+                _buildTextField(emailController, "Email", Icons.email),
+                SizedBox(height: 15),
+                _buildTextField(passwordController, "Password", Icons.lock,
+                    isPassword: true),
+                SizedBox(height: 25),
+                isLoading
+                    ? CircularProgressIndicator()
+                    : ElevatedButton(
+                        onPressed: _login,
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 50, vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 4,
+                          backgroundColor: Colors.brown.shade700,
+                        ),
+                        child: Text(
+                          "Login",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                SizedBox(height: 15),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => RegisterScreen()),
+                    );
+                  },
+                  child: Text(
+                    "Don't have an account? Sign up",
+                    style: TextStyle(
+                      color: Colors.brown.shade800,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(
+      TextEditingController controller, String label, IconData icon,
+      {bool isPassword = false}) {
+    return TextField(
+      controller: controller,
+      obscureText: isPassword,
+      style: TextStyle(color: Colors.brown.shade900),
+      decoration: InputDecoration(
+        prefixIcon: Icon(icon, color: Colors.brown.shade700),
+        labelText: label,
+        labelStyle: TextStyle(color: Colors.brown.shade700),
+        filled: true,
+        fillColor: Colors.brown.shade50,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       ),
     );
   }
