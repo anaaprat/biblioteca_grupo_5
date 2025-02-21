@@ -1,113 +1,183 @@
 import 'package:flutter/material.dart';
-import '../services/book_service.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import '../services/user_service.dart';
+import 'package:biblioteca_grupo_5/models/book_model.dart';
+import '../widgets/book_card.dart';
+import '/screens/login_screen.dart';
 
 class UserScreen extends StatefulWidget {
+  final String token;
+  UserScreen({required this.token});
+
   @override
   _UserScreenState createState() => _UserScreenState();
 }
 
 class _UserScreenState extends State<UserScreen> {
-  List<dynamic> books = [];
-  final BookService _bookService = BookService();
-  final UserService _userService = UserService();
+  final UserService userService = UserService();
+  List<Book> availableBooks = [];
+  List<Book> myBooks = [];
+  late String userEmail;
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    fetchAvailableBooks();
+    _decodeUserEmail();
   }
 
-  Future<void> fetchAvailableBooks() async {
-    final response = await _bookService.getAvailableBooks();
-    if (response['success']) {
+  void _decodeUserEmail() async {
+    Map<String, dynamic> decodedToken = JwtDecoder.decode(widget.token);
+
+    if (decodedToken.containsKey('sub') && decodedToken['sub'] != null) {
+      userEmail = decodedToken['sub'];
+      await _fetchBooksData();
+    } else {
       setState(() {
-        books = response['data'];
+        isLoading = false;
       });
     }
   }
 
-  Future<void> loanBook(int userId, int bookId) async {
-    final response = await _userService.loanBook(userId, bookId);
-    if (response['success']) {
+  void _logout() async {
+    final confirmation = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Logout'),
+        content: Text('Are you sure you want to logout?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text('Confirm'),
+          ),
+        ],
+      ),
+    );
+
+    // Si el usuario confirma, cerrar sesión
+    if (confirmation == true) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+      );
+    }
+  }
+
+  Future<void> _fetchBooksData() async {
+    try {
+      setState(() => isLoading = true);
+      availableBooks = await userService.getAvailableBooks();
+      myBooks = await userService.getMyBooks(userEmail, widget.token);
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
+
+  void _loanBook(int bookId) async {
+    final success = await userService.loanBook(bookId, widget.token);
+    if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Book loaned successfully!')),
       );
-      fetchAvailableBooks();
+      _fetchBooksData();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to loan book')),
+      );
+    }
+  }
+
+  void _returnBook(int bookId) async {
+    final success = await userService.returnBook(bookId, widget.token);
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Book returned successfully!')),
+      );
+      _fetchBooksData();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to return book')),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Available Books'),
-        backgroundColor: Colors.brown.shade700,
-      ),
-      body: books.isEmpty
-          ? Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: books.length,
-              itemBuilder: (context, index) {
-                final book = books[index];
-                final user = books[index];
-
-                return Card(
-                  color: Colors.brown.shade100,
-                  margin: EdgeInsets.all(10),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.brown.shade300, Colors.brown.shade100],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: DefaultTabController(
+          length: 2,
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            appBar: AppBar(
+              title: Text(
+                'User Panel',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.logout, color: Colors.white),
+                  onPressed: _logout,
+                ),
+              ],
+              backgroundColor: Colors.brown.shade700,
+              bottom: TabBar(
+                indicatorColor: Colors.white,
+                labelColor: Colors.white,
+                unselectedLabelColor: Colors.white60,
+                tabs: [
+                  Tab(text: 'Available Books'),
+                  Tab(text: 'My Books'),
+                ],
+              ),
+            ),
+            body: isLoading
+                ? Center(child: CircularProgressIndicator())
+                : TabBarView(
                     children: [
-                      ClipRRect(
-                        borderRadius:
-                            BorderRadius.vertical(top: Radius.circular(10)),
-                        child: Image.network(
-                          book['image'],
-                          width: double.infinity,
-                          height: 150,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              book['title'],
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 18),
-                            ),
-                            SizedBox(height: 5),
-                            Text('Author: ${book['author']}',
-                                style: TextStyle(fontSize: 14)),
-                            Text('Genre: ${book['genre']}',
-                                style: TextStyle(fontSize: 14)),
-                            Text('Year Published: ${book['yearPublished']}',
-                                style: TextStyle(fontSize: 14)),
-                          ],
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: Padding(
-                          padding: EdgeInsets.all(10),
-                          child: ElevatedButton(
-                            onPressed: () => loanBook(user['id'], book['id']),
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.brown.shade400),
-                            child: Text('Loan',
-                                style: TextStyle(color: Colors.white)),
-                          ),
-                        ),
-                      ),
+                      _buildBooksList(availableBooks, true),
+                      _buildBooksList(myBooks, false),
                     ],
                   ),
-                );
-              },
-            ),
+          ),
+        ),
+      ),
     );
   }
+
+  Widget _buildBooksList(List<Book> books, bool isAvailableTab) {
+    if (books.isEmpty) {
+      return Center(
+        child: Text(
+          isAvailableTab ? "No books available" : "No books borrowed",
+          style: TextStyle(fontSize: 18, color: Colors.brown.shade900),
+        ),
+      );
+    }
+    return ListView.builder(
+      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+      itemCount: books.length,
+      itemBuilder: (context, index) {
+        final book = books[index];
+        return BookCard(
+          book: book,
+          onLoan: isAvailableTab
+              ? () => _loanBook(book.id)
+              : () => _returnBook(book.id),
+          isAvailableTab: isAvailableTab,
+        );
+      },
+    );
+    }
 }
