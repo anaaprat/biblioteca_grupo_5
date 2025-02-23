@@ -18,7 +18,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
  
     void _register() async {
       final BuildContext currentContext =
-          context; // Guardar context antes de async
+          context; 
       setState(() {
         isLoading = true;
       });
@@ -34,7 +34,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         isLoading = false;
       });
 
-      // Verificamos si `result` tiene datos válidos
       if (result.containsKey("id")) {
         ScaffoldMessenger.of(currentContext).showSnackBar(
           const SnackBar(
@@ -134,7 +133,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   : ElevatedButton(
                       onPressed: _register,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF8D6E63), // Marrón claro
+                        backgroundColor: Color(0xFF8D6E63),
                         padding:
                             EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                         shape: RoundedRectangleBorder(
@@ -147,7 +146,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               SizedBox(height: 10),
               TextButton(
                 onPressed: () {
-                  Navigator.pop(context); // Regresar a Login
+                  Navigator.pop(context); 
                 },
                 child: Text("Already have an account? Log in",
                     style: TextStyle(color: Colors.white70)),

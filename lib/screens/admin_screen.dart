@@ -23,6 +23,9 @@ class _AdminScreenState extends State<AdminScreen> {
   void _fetchUsers() async {
     try {
       final fetchedUsers = await adminService.getUsers(widget.token);
+
+      fetchedUsers.removeWhere((user) => user['role'] == 'ADMIN');
+
       setState(() {
         users = fetchedUsers;
       });
@@ -50,7 +53,6 @@ class _AdminScreenState extends State<AdminScreen> {
       ),
     );
 
-    // Si el usuario confirma, cerrar sesión
     if (confirmation == true) {
       Navigator.pushReplacement(
         context,
@@ -97,14 +99,14 @@ class _AdminScreenState extends State<AdminScreen> {
               content: Text(
                   'User ${user['activated'] ? 'activated' : 'deactivated'} successfully')),
         );
-        return false; // Evita que desaparezca al deslizar
+        return false;
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to update user status')),
         );
       }
     }
-    return false; // Evita que desaparezca si se cancela la acción
+    return false;
   }
 
   @override

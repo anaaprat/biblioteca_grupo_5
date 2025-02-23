@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class BookCard extends StatelessWidget {
   final Book book;
   final VoidCallback onLoan;
-  final bool isAvailableTab; // Diferenciar Loan/Return
+  final bool isAvailableTab; 
 
   BookCard({
     required this.book,

@@ -58,7 +58,6 @@ class _UserScreenState extends State<UserScreen> {
       ),
     );
 
-    // Si el usuario confirma, cerrar sesión
     if (confirmation == true) {
       Navigator.pushReplacement(
         context,

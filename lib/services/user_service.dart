@@ -40,7 +40,7 @@ class UserService {
 
         return loansList.map((loan) {
           return Book.fromJson(
-              loan["book"]); // Extraemos el libro dentro del loan
+              loan["book"]); 
         }).toList();
       } else {
         throw Exception('Failed to load user books');
